@@ -1,0 +1,19 @@
+body{
+    font-family: Arial, sans-serif;
+    padding: 30px;
+    background-color: #e9e1e1;
+}
+#heading {
+    color: #0c0d0c;
+}
+#changeBtn{
+    background-color: #6496a0;
+    color: rgb(157, 28, 28);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#changeBtn:hover{
+    background-color: #804d6c;
+}
