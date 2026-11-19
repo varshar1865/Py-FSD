@@ -1,203 +1,135 @@
 
-const API = "/api/tasks";
+const API = "http://localhost:8080/api";
 
-let tasks = [];
+// Register donor
+document.getElementById("donorForm")
+.addEventListener("submit", async function(e) {
 
-const taskForm = document.getElementById("taskForm");
-const taskList = document.getElementById("taskList");
-const searchInput = document.getElementById("search");
-const filterSelect = document.getElementById("filter");
+    e.preventDefault();
 
-async function request(url, options = {}) {
-    const response = await fetch(url, {
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...options.headers
-        }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.error || "Something went wrong");
-    }
-
-    return data;
-}
-
-async function loadTasks() {
-    try {
-        tasks = await request(API);
-        renderTasks();
-        updateStats();
-    } catch (error) {
-        taskList.textContent = error.message;
-    }
-}
-
-taskForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const task = {
-        title: document.getElementById("title").value.trim(),
-        subject: document.getElementById("subject").value.trim(),
-        due_date: document.getElementById("dueDate").value,
-        priority: document.getElementById("priority").value
+    const donor = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        bloodGroup: document.getElementById("donorBlood").value,
+        location: document.getElementById("donorLocation").value,
+        available: true
     };
 
     try {
-        await request(API, {
+        const response = await fetch(API + "/donors", {
             method: "POST",
-            body: JSON.stringify(task)
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(donor)
         });
 
-        taskForm.reset();
-        document.getElementById("priority").value = "Medium";
+        if (!response.ok) throw new Error("Registration failed");
 
-        await loadTasks();
-    } catch (error) {
-        alert(error.message);
+        document.getElementById("donorMessage")
+            .textContent = "Donor registered successfully!";
+
+        this.reset();
+
+    } catch(error) {
+        document.getElementById("donorMessage")
+            .textContent = "Unable to register donor. Check server.";
     }
 });
 
-function renderTasks() {
-    const search = searchInput.value.toLowerCase();
-    const filter = filterSelect.value;
+// Submit blood request
+document.getElementById("requestForm")
+.addEventListener("submit", async function(e) {
 
-    const filtered = tasks.filter(task => {
-        const matchesSearch =
-            task.title.toLowerCase().includes(search) ||
-            task.subject.toLowerCase().includes(search);
+    e.preventDefault();
 
-        const matchesFilter =
-            filter === "all" ||
-            (filter === "pending" && !task.completed) ||
-            (filter === "completed" && task.completed);
+    const request = {
+        patientName: document.getElementById("patientName").value,
+        bloodGroup: document.getElementById("requestBlood").value,
+        location: document.getElementById("requestLocation").value,
+        units: Number(document.getElementById("units").value)
+    };
 
-        return matchesSearch && matchesFilter;
-    });
+    try {
+        const response = await fetch(API + "/requests", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(request)
+        });
 
-    taskList.replaceChildren();
+        if (!response.ok) throw new Error("Request failed");
 
-    if (filtered.length === 0) {
-        const message = document.createElement("p");
-        message.textContent = "No tasks found. Add a new task!";
-        taskList.appendChild(message);
+        document.getElementById("requestMessage")
+            .textContent = "Blood request submitted successfully!";
+
+        this.reset();
+
+    } catch(error) {
+        document.getElementById("requestMessage")
+            .textContent = "Unable to submit request. Check server.";
+    }
+});
+
+// Find compatible donors
+async function findDonors() {
+
+    const blood = document.getElementById("searchBlood").value;
+    const location = document.getElementById("searchLocation").value;
+
+    const results = document.getElementById("results");
+
+    if (!blood || !location.trim()) {
+        results.textContent = "Please select blood group and location.";
         return;
     }
 
-    filtered.forEach(task => {
-        const card = document.createElement("div");
-        card.className = `task-card ${task.completed ? "done" : ""}`;
-
-        const details = document.createElement("div");
-
-        const title = document.createElement("h3");
-        title.textContent = task.title;
-
-        const subject = document.createElement("p");
-        subject.textContent = "Subject: " + task.subject;
-
-        const dueDate = document.createElement("p");
-        dueDate.textContent = "Due: " + (task.due_date || "Not set");
-
-        const priority = document.createElement("p");
-        priority.className = "priority " + task.priority;
-        priority.textContent = task.priority + " Priority";
-
-        details.append(title, subject, dueDate, priority);
-
-        const actions = document.createElement("div");
-        actions.className = "actions";
-
-        const toggle = document.createElement("button");
-        toggle.textContent = task.completed ? "Undo" : "Complete";
-        toggle.addEventListener("click", () => toggleTask(task));
-
-        const edit = document.createElement("button");
-        edit.textContent = "Edit";
-        edit.addEventListener("click", () => editTask(task));
-
-        const remove = document.createElement("button");
-        remove.textContent = "Delete";
-        remove.className = "delete";
-        remove.addEventListener("click", () => deleteTask(task.id));
-
-        actions.append(toggle, edit, remove);
-        card.append(details, actions);
-        taskList.appendChild(card);
-    });
-}
-
-async function toggleTask(task) {
-    try {
-        await request(`${API}/${task.id}`, {
-            method: "PUT",
-            body: JSON.stringify({
-                completed: task.completed ? 0 : 1
-            })
-        });
-
-        await loadTasks();
-    } catch (error) {
-        alert(error.message);
-    }
-}
-
-async function editTask(task) {
-    const title = prompt("Enter new task title:", task.title);
-    if (title === null) return;
-
-    const subject = prompt("Enter subject:", task.subject);
-    if (subject === null) return;
-
-    if (!title.trim() || !subject.trim()) {
-        alert("Title and subject cannot be empty.");
-        return;
-    }
+    results.textContent = "Searching donors...";
 
     try {
-        await request(`${API}/${task.id}`, {
-            method: "PUT",
-            body: JSON.stringify({
-                title: title.trim(),
-                subject: subject.trim()
-            })
+        const url = `${API}/match?bloodGroup=${encodeURIComponent(blood)}&location=${encodeURIComponent(location)}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) throw new Error("Search failed");
+
+        const donors = await response.json();
+
+        results.replaceChildren();
+
+        if (donors.length === 0) {
+            results.textContent = "No matching registered donors found.";
+            return;
+        }
+
+        const heading = document.createElement("h3");
+        heading.textContent = "Potential matching donors";
+        results.appendChild(heading);
+
+        donors.forEach(donor => {
+
+            const card = document.createElement("div");
+            card.className = "donor-result";
+
+            const name = document.createElement("h3");
+            name.textContent = donor.name;
+
+            const group = document.createElement("p");
+            group.textContent = "Blood Group: " + donor.bloodGroup;
+
+            const city = document.createElement("p");
+            city.textContent = "Location: " + donor.location;
+
+            const status = document.createElement("p");
+            status.textContent = "Availability: Registered as available";
+
+            card.append(name, group, city, status);
+            results.appendChild(card);
         });
 
-        await loadTasks();
-    } catch (error) {
-        alert(error.message);
+        const note = document.createElement("p");
+        note.textContent =
+            "All matches require blood-bank verification and donor consent before any donation.";
+        results.appendChild(note);
+
+    } catch(error) {
+        results.textContent = "Unable to find donors. Check server connection.";
     }
 }
-
-async function deleteTask(id) {
-    if (!confirm("Are you sure you want to delete this task?")) {
-        return;
-    }
-
-    try {
-        await request(`${API}/${id}`, {
-            method: "DELETE"
-        });
-
-        await loadTasks();
-    } catch (error) {
-        alert(error.message);
-    }
-}
-
-function updateStats() {
-    const completed = tasks.filter(task => task.completed).length;
-    const pending = tasks.length - completed;
-
-    document.getElementById("totalTasks").textContent = tasks.length;
-    document.getElementById("completedTasks").textContent = completed;
-    document.getElementById("pendingTasks").textContent = pending;
-}
-
-searchInput.addEventListener("input", renderTasks);
-filterSelect.addEventListener("change", renderTasks);
-
-loadTasks();

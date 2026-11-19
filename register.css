@@ -1,0 +1,119 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #fff0f0, #ffd6d6);
+    min-height: 100vh;
+    padding: 30px 15px;
+}
+
+.register-container {
+    max-width: 500px;
+    margin: auto;
+}
+
+.logo {
+    text-align: center;
+    color: #c62828;
+    margin-bottom: 25px;
+}
+
+.logo h1 {
+    font-size: 28px;
+}
+
+.logo p {
+    margin-top: 8px;
+    color: #666;
+}
+
+.register-box {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.register-box h2 {
+    text-align: center;
+    color: #c62828;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin: 15px 0 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    outline: none;
+    background: white;
+}
+
+input:focus, select:focus {
+    border-color: #c62828;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 25px;
+    background: #c62828;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.register-btn:hover {
+    background: #8e0000;
+}
+
+#message {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: #c62828;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #777;
+    font-size: 12px;
+}
+
+@media(max-width: 500px) {
+    .register-box {
+        padding: 20px;
+    }
+}

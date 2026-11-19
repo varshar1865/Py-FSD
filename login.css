@@ -1,0 +1,142 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #fff0f0, #ffd6d6);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 430px;
+    padding: 20px;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #c62828;
+}
+
+.logo h1 {
+    font-size: 27px;
+}
+
+.logo p {
+    margin-top: 8px;
+    color: #666;
+}
+
+.login-box {
+    background: white;
+    padding: 35px 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.login-box h2 {
+    text-align: center;
+    color: #c62828;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin: 15px 0 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    outline: none;
+    font-size: 14px;
+    background: white;
+}
+
+input:focus, select:focus {
+    border-color: #c62828;
+}
+
+.password-box {
+    display: flex;
+    gap: 7px;
+}
+
+.password-box input {
+    flex: 1;
+    min-width: 0;
+}
+
+.password-box button {
+    padding: 0 12px;
+    background: #eee;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 25px;
+    background: #c62828;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background: #8e0000;
+}
+
+#message {
+    text-align: center;
+    margin-top: 15px;
+    color: #c62828;
+}
+
+.register {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.register a {
+    color: #c62828;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #777;
+    font-size: 12px;
+}
+
+@media(max-width: 450px) {
+    .login-box {
+        padding: 25px 20px;
+    }
+}
